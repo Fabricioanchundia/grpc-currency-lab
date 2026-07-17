@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package currency;
+
+message ConvertRequest {
+  string from_currency = 1; // e.g. "USD"
+  string to_currency = 2;   // e.g. "EUR"
+  double amount = 3;        // cantidad a convertir
+}
+
+message ConvertReply {
+  double converted_amount = 1;
+  double rate = 2; // tasa usada (to/from)
+  string from_currency = 3;
+  string to_currency = 4;
+}
+
+message Currency {
+  string code = 1; // "USD"
+  string name = 2; // "United States Dollar"
+}
+
+message Empty {}
+
+// --- Desafío: GetRate (solo la tasa, sin convertir cantidad) ---
+message RateRequest {
+  string from_currency = 1;
+  string to_currency = 2;
+}
+
+message RateReply {
+  double rate = 1;
+}
+
+// --- Actividad: Suma (RPC unary de ejemplo, no relacionado a monedas) ---
+message SumaRequest {
+  double a = 1;
+  double b = 2;
+}
+
+message SumaReply {
+  double resultado = 1;
+}
+
+service CurrencyConverter {
+  // Conversión simple (unary)
+  rpc Convert(ConvertRequest) returns (ConvertReply);
+
+  // El servidor envía la lista de monedas soportadas (stream)
+  rpc GetSupportedCurrencies(Empty) returns (stream Currency);
+
+  // (Opcional) El servidor stream de tasas periódicas (simulado)
+  rpc StreamRates(Empty) returns (stream ConvertReply);
+
+  // Desafío: devuelve solo la tasa de cambio, sin convertir una cantidad
+  rpc GetRate(RateRequest) returns (RateReply);
+
+  // Actividad: suma dos números (ejemplo de RPC unary simple)
+  rpc Suma(SumaRequest) returns (SumaReply);
+}
